@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atreya Bag | Data Engineer</title>
+<meta name="description" content="Atreya Bag, Data Engineer. Travel through the pipeline: GCP, BigQuery, Airflow, dbt and AI-ready data.">
+<meta property="og:title" content="Atreya Bag | Data Engineer">
+<meta property="og:description" content="Travel through the pipeline. An interactive journey through my work in data engineering.">
+<meta name="theme-color" content="#0E1B2E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1B2E; --ink-2:#15263F; --line:rgba(242,238,228,.10);
+  --text:#F2EEE4; --muted:#9FB0C8; --teal:#4FB3A2; --amber:#E3A94B; --red:#E0645A;
+  --font:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme:dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--ink)}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html.locked,html.locked body{overflow:hidden;touch-action:none}
+a{color:var(--teal)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+#scene{position:fixed;inset:0;width:100vw;height:100vh;display:block;pointer-events:none;z-index:0}
+body.gaming #scene{pointer-events:auto;cursor:crosshair}
+
+/* letterbox bars for the cinematic opening */
+.bar{position:fixed;left:0;right:0;height:13vh;background:#060B14;z-index:30;transition:transform 1.6s cubic-bezier(.7,0,.2,1)}
+.bar.top{top:0}.bar.bottom{bottom:0}
+body.entered .bar.top{transform:translateY(-100%)}
+body.entered .bar.bottom{transform:translateY(100%)}
+
+/* intro gate */
+#intro{position:fixed;inset:0;z-index:40;display:grid;place-items:center;text-align:center;padding:24px;
+  background:radial-gradient(ellipse at 50% 55%,rgba(79,179,162,.08),transparent 60%),#0A1424;transition:opacity 1.2s ease}
+body.entered #intro{opacity:0;pointer-events:none}
+#intro .inner{max-width:560px}
+#intro .lead{font-size:clamp(15px,2vw,18px);color:var(--muted);margin:0 0 6px}
+#intro h2{font-weight:500;font-size:clamp(28px,5vw,46px);line-height:1.15;margin:0 0 30px;letter-spacing:-.01em}
+#intro .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:13px 22px;border-radius:999px;font-size:16px;cursor:pointer;transition:background .25s,border-color .25s,transform .25s}
+.btn:hover{border-color:var(--teal);transform:translateY(-1px)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#0A1424;font-weight:600}
+.btn.primary:hover{background:#63c4b3}
+.linkish{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:4px;cursor:pointer;font-size:15px;margin-top:22px}
+.linkish:hover{color:var(--text)}
+#intro .note{font-size:13px;color:var(--muted);margin-top:14px;opacity:.8}
+
+/* hud */
+#hud{position:fixed;z-index:20;left:max(18px,env(safe-area-inset-left));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;opacity:0;transition:opacity 1s .8s}
+body.entered #hud{opacity:1}
+#hud button{display:flex;align-items:center;gap:10px;background:none;border:0;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 0;text-align:left}
+#hud .dot{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted);flex:none;transition:all .4s}
+#hud .lbl{opacity:0;transform:translateX(-4px);transition:all .3s;background:rgba(10,20,36,.92);border:1px solid var(--line);padding:3px 9px;border-radius:6px;white-space:nowrap;pointer-events:none}
+#hud:hover .lbl{opacity:1;transform:none}
+#hud button.active{color:var(--text)}
+#hud button.active .dot{background:var(--teal);border-color:var(--teal);box-shadow:0 0 12px var(--teal)}
+#hud button.done .dot{background:rgba(79,179,162,.35);border-color:var(--teal)}
+
+#topbar{position:fixed;z-index:20;top:calc(14px + env(safe-area-inset-top,0px));right:18px;display:flex;gap:8px;opacity:0;transition:opacity 1s .8s}
+body.entered #topbar{opacity:1}
+.chip{border:1px solid var(--line);background:rgba(14,27,46,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--text);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--teal)}
+
+#progress{position:fixed;z-index:20;left:0;bottom:0;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--teal),var(--amber))}
+
+/* story */
+#story{position:relative;z-index:10}
+.chapter{position:relative;min-height:var(--h,170vh)}
+.panel{position:sticky;top:calc(50vh - 180px);max-width:430px;margin-left:clamp(70px,9vw,140px);padding:26px 28px;border-radius:18px;
+  background:linear-gradient(160deg,rgba(21,38,63,.78),rgba(14,27,46,.62));border:1px solid var(--line);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.panel.right{margin-left:auto;margin-right:clamp(24px,7vw,120px)}
+.panel.show{opacity:1;transform:none}
+.panel .stage{font-size:13px;color:var(--teal);margin:0 0 8px;letter-spacing:.01em}
+.panel .meta{font-size:14px;color:var(--muted);margin:-4px 0 10px}
+.panel .lead{color:var(--text);font-size:16.5px;margin:0 0 14px}
+.panel h3{font-size:14px;font-weight:600;color:var(--text);margin:16px 0 6px}
+.panel .group{padding-top:12px;margin-top:12px;border-top:1px solid var(--line)}
+.panel .group h3{margin-top:0}
+.panel ul.items{margin:0;padding-left:18px;font-size:15px}
+.panel ul.items li{margin:0 0 6px}
+.panel .after{font-size:15px;margin-top:12px}
+.tl{list-style:none;margin:6px 0 0;padding:0}
+.tl > li{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.45}
+.tl .tags{margin:6px 0 0}
+.tl .when{color:var(--muted);font-size:13px;padding-top:2px}
+.tl .note{display:block;color:#C9C5BC;margin-top:2px}
+.facts{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.facts li{font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid rgba(79,179,162,.35);color:var(--text);background:rgba(14,27,46,.5)}
+.panel.wide{max-width:520px;position:relative;top:auto !important;margin-top:18vh}
+#finale{padding-bottom:12vh}
+.skills{display:grid;gap:8px}
+.skillrow{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center}
+.skillrow .sg{font-size:13px;color:var(--muted)}
+.skillrow .tags{margin:0}
+.emailline{margin:0 0 8px;font-size:15px}
+.emailline a{color:var(--text);text-decoration:none;border-bottom:1px solid rgba(79,179,162,.5)}
+.panel h2{font-size:clamp(24px,2.6vw,32px);line-height:1.2;font-weight:600;margin:0 0 12px;letter-spacing:-.01em}
+.panel p{margin:0 0 12px;color:#DCD8CF}
+.panel ul{margin:0 0 6px;padding-left:18px;color:#DCD8CF}
+.panel li{margin:0 0 8px}
+.panel .role{color:var(--muted);font-size:15px;margin-top:-6px}
+.panel .more{display:none;background:none;border:0;color:var(--teal);padding:0;font-size:14px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+body.plain .panel .more{display:none !important}
+body.plain .panel .detail,body.plain .panel .after{display:block !important}
+.award{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:12px;border:1px solid rgba(227,169,75,.35);background:rgba(227,169,75,.08);font-size:15px}
+.award .star{color:var(--amber);font-size:20px;line-height:1.2}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px;padding:0;list-style:none}
+.tags li{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin:0;cursor:default;
+  transition:color .25s,border-color .25s,background .25s,box-shadow .25s,transform .25s}
+.tags li:hover,.tags li:active{color:var(--text);border-color:var(--teal);background:rgba(79,179,162,.14);
+  box-shadow:0 0 16px rgba(79,179,162,.55),inset 0 0 8px rgba(79,179,162,.25);transform:translateY(-1px)}
+.certs{list-style:none;padding:0;margin:8px 0 14px}
+.certs li{padding:10px 0;border-bottom:1px solid var(--line)}
+.certs li:last-child{border-bottom:0}
+.certs span{display:block;color:var(--muted);font-size:14px}
+.contact{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.contact a{text-decoration:none}
+
+/* intro chapter: the particles carry the name, the panel sits low */
+#intro-ch .panel{position:absolute;top:66vh;bottom:auto;left:50%;margin:0;transform:translate(-50%,24px);text-align:center;background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;max-width:640px;width:calc(100% - 40px)}
+#intro-ch .panel.show{transform:translate(-50%,0)}
+#intro-ch h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#intro-ch .sub{font-size:clamp(17px,2.2vw,22px);color:var(--text);margin:0 0 6px}
+#intro-ch .hint{font-size:14px;color:var(--muted);margin-top:18px;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* game */
+#game{position:fixed;inset:0;z-index:25;pointer-events:none;opacity:0;transition:opacity .5s}
+body.gaming #game{opacity:1}
+#game .stats{position:absolute;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;gap:10px}
+#game .stat{white-space:nowrap;padding:8px 16px;border-radius:999px;background:rgba(14,27,46,.7);border:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+#game .stat b{font-weight:600}
+#game .stat.ok b{color:var(--teal)}#game .stat.bad b{color:var(--red)}#game .stat.spd b{color:var(--amber)}
+#game .tip small{font-size:.65em;color:var(--muted)}
+#game .timer{position:absolute;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(320px,70vw);height:4px;border-radius:4px;background:rgba(242,238,228,.12);overflow:hidden}
+#game .timer i{display:block;height:100%;width:100%;background:var(--teal);transform-origin:0 50%}
+#game .skip{position:absolute;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));pointer-events:auto}
+#game .tip{position:absolute;left:50%;top:22%;transform:translateX(-50%);font-size:clamp(18px,2.6vw,26px);text-align:center;transition:opacity .6s;text-shadow:0 2px 20px rgba(0,0,0,.6);width:90%}
+#flash{position:fixed;inset:0;z-index:24;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(224,100,90,.45));opacity:0;transition:opacity .35s}
+body.gaming .panel{opacity:0 !important;pointer-events:none}
+body.gaming #story{pointer-events:none}
+body.gaming #hud,body.gaming #topbar{opacity:0;pointer-events:none}
+
+.result{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(79,179,162,.08);font-size:15px}
+.result b{color:var(--teal)}
+
+/* summary / no-webgl mode */
+body.plain #scene,body.plain #hud,body.plain .bar,body.plain #intro,body.plain #progress,body.plain #game{display:none !important}
+body.plain .chapter{min-height:0;padding:28px 0}
+body.plain .panel{position:relative;top:auto;opacity:1;transform:none;margin:0 auto;max-width:720px;width:calc(100% - 32px)}
+body.plain .panel.wide{margin-top:0}
+body.plain #intro-ch .panel{position:relative;left:auto;bottom:auto;transform:none;text-align:left;background:linear-gradient(160deg,rgba(21,38,63,.78),rgba(14,27,46,.62));border:1px solid var(--line)}
+body.plain #intro-ch h1{position:static;width:auto;height:auto;clip:auto;font-size:40px;margin:0 0 4px}
+body.plain #intro-ch .hint,body.plain .play-only{display:none}
+body.plain #topbar{opacity:1}
+
+@media (max-width:760px){
+  .panel,.panel.right{margin:0 12px;max-width:none;position:sticky;top:calc(100vh - 16px - var(--ph,300px));padding:18px 20px}
+  .panel .more{display:inline-block}
+  .panel:not(.open) .detail,.panel:not(.open) .after{display:none}
+  .tl > li{grid-template-columns:1fr;gap:2px}
+  .skillrow{grid-template-columns:1fr;gap:4px}
+  .facts{justify-content:center}
+  .panel h2{font-size:22px}
+  #hud{display:none}
+  body{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  .panel,.bar,#intro{transition:opacity .3s}
+  #intro-ch .hint{animation:none}
+}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="bar top"></div><div class="bar bottom"></div>
+
+<div id="intro" role="dialog" aria-label="Welcome">
+  <div class="inner">
+    <p class="lead">An interactive journey through my work</p>
+    <h2>You are a packet of data.<br>This is your pipeline.</h2>
+    <div class="actions">
+      <button class="btn primary" id="enterSound">Enter with sound</button>
+      <button class="btn" id="enterQuiet">Enter quietly</button>
+    </div>
+    <div><button class="linkish" id="goPlain">Short on time? Read the summary instead</button></div>
+    <p class="note">Best experienced with headphones. Scroll to travel.</p>
+  </div>
+</div>
+
+<nav id="hud" aria-label="Pipeline stages"></nav>
+<div id="topbar">
+  <button class="chip" id="muteBtn" aria-pressed="false">Sound on</button>
+  <button class="chip" id="plainBtn">Summary view</button>
+</div>
+<div id="progress"></div>
+
+<main id="story"></main>
+
+<div id="game" aria-live="polite">
+  <div class="stats"><div class="stat ok">Blocked <b id="gBlocked">0</b></div><div class="stat bad">Leaked <b id="gLeaked">0</b></div><div class="stat spd">Speed <b id="gSpeed">1.0x</b></div></div>
+  <div class="tip" id="gTip">Tap the red records before they reach production.<br><small>Every one you catch makes the next one faster.</small></div>
+  <div class="timer"><i id="gTimer"></i></div>
+  <button class="chip skip" id="gSkip">Skip</button>
+</div>
+<div id="flash"></div>
+
+<noscript><div style="max-width:720px;margin:40px auto;padding:0 16px">Atreya Bag, Data Engineer. Python, SQL, BigQuery, Airflow, dbt. Contact: atreyabag26@gmail.com</div></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+<script>
+/* ==========================================================================
+   CONTENT — edit this object to update the site. Nothing else needs changing.
+   To add side projects later: fill `sideProjects` and set showSideProjects: true.
+   ========================================================================== */
+const CONTENT = {
+  name: "Atreya Bag",
+  links: {
+    email: "atreyabag26@gmail.com",
+    linkedin: "https://www.linkedin.com/in/atreyabag/",
+    github: "https://github.com/AtreyaBag"
+  },
+
+  /* The story, in timeline order. Every stage uses the same structure:
+     stage → title → meta (role, company, dates) → lead → groups of highlights with their tech. */
+  chapters: [
+    { id: "intro-ch", nav: "Start", year: "", height: "130vh", type: "intro" },
+
+    { id: "origin", nav: "Foundations", year: "2019", side: "left",
+      stage: "01 · Foundations · 2019 to 2023",
+      title: "Where the data starts",
+      lead: "A computer science degree, early hands-on roles, and my first end-to-end data pipeline.",
+      timeline: [
+        { when: "2019 to 2023", what: "BTech, Computer Science and Engineering", where: "Sikkim Manipal Institute of Technology", note: "CGPA 8.98/10" },
+        { when: "Oct 2021 to Jan 2022", what: "Subject Matter Expert", where: "Chegg India", note: "Solved 200+ data structures, algorithms and core CS questions for students worldwide." },
+        { when: "Apr to Jul 2022", what: "SDE Intern", where: "AasPass", note: "Built client-facing web frontends in React." },
+        { when: "Feb to Jun 2023", what: "Technical Trainee", where: "TEKsystems", note: "Capstone: a serverless computer vision pipeline on GCP turning real-time CCTV images into traffic insights.", tags: ["Pub/Sub", "Cloud Functions", "Vision API", "BigQuery", "Looker Studio"] }
+      ] },
+
+    { id: "orchestration", nav: "Associate Engineer", year: "2023", side: "right",
+      stage: "02 · Associate Engineer · Dec 2023 to Mar 2025",
+      title: "Learning to move data at scale",
+      meta: "Associate Engineer, TEKsystems Global Data Engineering practice",
+      lead: "Started on internal proofs of concept, then joined a banking client's large-scale migration from on-prem to Google Cloud.",
+      groups: [
+        { title: "Internal POCs", items: [
+            "Applied LLM-powered sentiment analysis to a large customer review dataset with Snowflake Cortex, with a Streamlit dashboard for trends by product and category.",
+            "Evaluated features of a new Tableau release through a dashboard POC." ],
+          tags: ["Snowflake Cortex", "Streamlit", "Tableau"] },
+        { title: "Banking data migration", items: [
+            "Built and scheduled Airflow DAGs to migrate data from on-prem systems into BigQuery.",
+            "Wrote transformation and merge scripts in Python and SQL.",
+            "Ran and verified data loads for highly classified financial data." ],
+          tags: ["Airflow", "BigQuery", "Python", "SQL"] }
+      ],
+      award: "Spot Award, February 2025, for contributions to the data migration." },
+
+    { id: "warehouse", nav: "Software Engineer", year: "2025", side: "right",
+      stage: "03 · Software Engineer · Apr 2025 to present",
+      title: "Owning the pipeline end to end",
+      meta: "Software Engineer, TEKsystems Global Data Engineering practice",
+      lead: "Promoted to own pipelines across every layer of the banking client's data platform.",
+      groups: [
+        { title: "Ownership", items: [
+            "Own data pipelines across every layer of the platform, handling terabytes of highly classified financial data in BigQuery.",
+            "Resolve legacy data issues carried over from on-prem systems." ],
+          tags: ["BigQuery", "Airflow"] },
+        { title: "Engineering practice", items: [
+            "Build ELT models and reusable macros with dbt to standardise transformations.",
+            "Ship changes through Git and Jenkins CI/CD." ],
+          tags: ["dbt", "Git", "Jenkins"] },
+        { title: "Team", items: [
+            "The go-to engineer for newly introduced internal tools, training and mentoring teammates on them." ] }
+      ] },
+
+    { id: "gate", nav: "The challenge", year: "", side: "left", height: "150vh", type: "gate",
+      stage: "Interlude · Production pressure",
+      title: "Production doesn't wait",
+      lead: "Migrating terabytes of banking data means thousands of loads, merges and deployments. One broken record can ripple all the way to a customer, and the volume never slows down." },
+
+    { id: "ai", nav: "What's next", year: "Now", side: "left",
+      stage: "04 · What's next",
+      title: "Where the data goes next",
+      lead: "Modern data platforms increasingly feed AI. That's the direction I'm building towards.",
+      groups: [
+        { title: "Applied", items: [ "LLM-powered sentiment analysis on real customer data with Snowflake Cortex." ], tags: ["Snowflake Cortex", "LLMs"] },
+        { title: "Building now", items: [ "Lakehouse pipelines with PySpark, Databricks and Delta Lake.", "Retrieval-augmented generation (RAG) with vector databases." ], tags: ["PySpark", "Databricks", "Delta Lake", "RAG"] }
+      ],
+      after: `Follow the builds on <a href="https://github.com/AtreyaBag" target="_blank" rel="noopener">GitHub</a>.` },
+
+    { id: "finale", nav: "At a glance", year: "", side: "left", height: "160vh", type: "finale" }
+  ],
+
+  skills: [
+    { group: "Languages", items: ["Python", "SQL"] },
+    { group: "Cloud and warehousing", items: ["GCP", "BigQuery", "Snowflake"] },
+    { group: "Orchestration and modelling", items: ["Apache Airflow", "dbt"] },
+    { group: "Delivery", items: ["Git", "Jenkins CI/CD"] },
+    { group: "Analytics and AI", items: ["Snowflake Cortex", "Streamlit", "Tableau", "Looker Studio"] },
+    { group: "Lakehouse", items: ["PySpark", "Databricks", "Delta Lake"] }
+  ],
+  certifications: [
+    { name: "Databricks Certified Data Engineer Associate", detail: "Dec 2025 to Dec 2027" },
+    { name: "AWS Certified Developer, Associate", detail: "Jan 2024 to Jan 2027" }
+  ],
+
+  showSideProjects: false,
+  sideProjects: [
+    // { title: "Project name", summary: "One or two lines on what it does.", stack: ["Next.js", "NestJS"], link: "https://github.com/AtreyaBag/..." }
+  ]
+};
+
+/* ==========================================================================
+   Page structure — rendered from CONTENT with one consistent template
+   ========================================================================== */
+const tagList = t => t && t.length ? `<ul class="tags">${t.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
+function renderChapter(c) {
+  if (c.type === 'intro') return `<h1>${CONTENT.name}</h1>
+      <p class="sub">Data Engineer building reliable, AI-ready data pipelines</p>
+      <p class="role">Python, SQL, GCP, BigQuery, Airflow and dbt</p>
+      <ul class="facts"><li>Nearly 3 years in data engineering</li><li>Banking-scale data on GCP</li><li>Databricks and AWS certified</li></ul>
+      <p class="hint">Scroll to travel the pipeline</p>`;
+  if (c.type === 'finale') {
+    const skills = CONTENT.skills.map(g => `<div class="skillrow"><span class="sg">${g.group}</span>${tagList(g.items)}</div>`).join('');
+    const certs = CONTENT.certifications.map(x => `<li>${x.name}<span>${x.detail}</span></li>`).join('');
+    let side = '';
+    if (CONTENT.showSideProjects && CONTENT.sideProjects.length) {
+      side = `<h3>Beyond the pipeline</h3><ul class="items">` + CONTENT.sideProjects.map(p =>
+        `<li><b>${p.link ? `<a href="${p.link}" target="_blank" rel="noopener">${p.title}</a>` : p.title}</b>: ${p.summary}${p.stack ? tagList(p.stack) : ''}</li>`).join('') + `</ul>`;
+    }
+    const e = CONTENT.links.email;
+    return `<p class="stage">At a glance</p>
+      <h2>You travelled from raw source to AI in about two minutes.</h2>
+      <p class="lead">Mine took three years, and it's still flowing.</p>
+      <h3>Skills</h3><div class="skills">${skills}</div>
+      <h3>Credentials</h3><ul class="certs">${certs}<li>BTech, Computer Science and Engineering<span>Sikkim Manipal Institute of Technology, CGPA 8.98/10</span></li></ul>
+      ${side}
+      <h3>Get in touch</h3>
+      <p class="emailline"><a href="mailto:${e}">${e}</a></p>
+      <div class="contact">
+        <a class="btn primary" id="mailBtn" href="mailto:${e}?subject=${encodeURIComponent('Hello Atreya')}">Email me</a>
+        <a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=${e}&su=${encodeURIComponent('Hello Atreya')}" target="_blank" rel="noopener">Open in Gmail</a>
+        <button class="btn" id="copyEmail" type="button">Copy email</button>
+      </div>
+      <div class="contact">
+        <a class="btn" href="${CONTENT.links.linkedin}" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="${CONTENT.links.github}" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <button class="linkish play-only" id="replay">Travel the pipeline again</button>`;
+  }
+  let h = `<p class="stage">${c.stage}</p><h2>${c.title}</h2>`;
+  if (c.meta) h += `<p class="meta">${c.meta}</p>`;
+  h += `<p class="lead">${c.lead}</p>`;
+  let detail = '';
+  if (c.timeline) detail += `<ol class="tl">${c.timeline.map(t => `<li><span class="when">${t.when}</span><div><b>${t.what}</b>, ${t.where}<span class="note">${t.note}</span>${tagList(t.tags)}</div></li>`).join('')}</ol>`;
+  if (c.groups) detail += c.groups.map(g => `<div class="group"><h3>${g.title}</h3><ul class="items">${g.items.map(i => `<li>${i}</li>`).join('')}</ul>${tagList(g.tags)}</div>`).join('');
+  if (c.award) detail += `<div class="award"><span class="star" aria-hidden="true">✦</span><span>${c.award}</span></div>`;
+  if (detail) h += `<div class="detail">${detail}</div>`;
+  if (c.after) h += `<p class="after">${c.after}</p>`;
+  if (c.type === 'gate') h += `<p class="play-only">Try it: stop the broken records before they reach production. Every one you catch makes the next one faster.</p>
+      <div id="gateResult"></div><button class="btn primary play-only" id="playGate">Play the gate</button>`;
+  return h;
+}
+(function buildDOM(){
+  const story = document.getElementById('story');
+  const hud = document.getElementById('hud');
+  CONTENT.chapters.forEach((c, i) => {
+    const html = renderChapter(c);
+    const s = document.createElement('section');
+    s.className = 'chapter'; s.id = c.id;
+    if (c.height) s.style.setProperty('--h', c.height);
+    const hasMore = /class="detail"/.test(html);
+    s.innerHTML = `<div class="panel ${c.side === 'right' ? 'right' : ''} ${c.type === 'finale' ? 'wide' : ''}">${html}${hasMore ? '<button class="more" aria-expanded="false">Show details</button>' : ''}</div>`;
+    const mb = s.querySelector('.more');
+    if (mb) mb.addEventListener('click', () => { const p = s.querySelector('.panel'); const o = p.classList.toggle('open'); mb.textContent = o ? 'Hide details' : 'Show details'; mb.setAttribute('aria-expanded', String(o)); requestAnimationFrame(measure); });
+    story.appendChild(s);
+
+    const b = document.createElement('button');
+    b.innerHTML = `<span class="dot"></span><span class="lbl">${c.year ? `<b>${c.year}</b> ` : ''}${c.nav}</span>`;
+    b.setAttribute('aria-label', c.nav);
+    b.addEventListener('click', () => jumpTo(i));
+    hud.appendChild(b);
+  });
+  // copy email (with a fallback when the clipboard is blocked)
+  const cp = document.getElementById('copyEmail');
+  if (cp) cp.addEventListener('click', async () => {
+    const e = CONTENT.links.email;
+    try { await navigator.clipboard.writeText(e); cp.textContent = 'Copied'; }
+    catch (err) { const r = document.createRange(); const n = document.querySelector('.emailline a'); r.selectNodeContents(n); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); cp.textContent = 'Selected, press Ctrl/Cmd+C'; }
+    setTimeout(() => cp.textContent = 'Copy email', 2500);
+  });
+  // skills glow on hover, with a soft tick
+  document.querySelectorAll('.tags li').forEach(li => li.addEventListener('pointerenter', () => { try { Sound.tick(); } catch (e) {} }));
+})();
+
+/* ==========================================================================
+   Sound — everything is synthesised live with the Web Audio API. No files.
+   ========================================================================== */
+const Sound = (() => {
+  let ctx, master, verb, dry, droneGain, droneFilter, windGain, windFilter, muted = false, ready = false;
+
+  function noiseBuffer(sec) {
+    const b = ctx.createBuffer(1, ctx.sampleRate * sec, ctx.sampleRate);
+    const d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return b;
+  }
+  function impulse(sec, decay) {
+    const len = ctx.sampleRate * sec, b = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay); }
+    return b;
+  }
+  function init(startMuted) {
+    if (ready) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = startMuted ? 0 : 0.9; muted = !!startMuted;
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3;
+    master.connect(comp).connect(ctx.destination);
+    verb = ctx.createConvolver(); verb.buffer = impulse(3.5, 2.6);
+    const verbGain = ctx.createGain(); verbGain.gain.value = 0.55;
+    verb.connect(verbGain).connect(master);
+    dry = ctx.createGain(); dry.gain.value = 1; dry.connect(master);
+
+    // ambient drone: detuned saws through a slowly breathing low-pass filter
+    droneFilter = ctx.createBiquadFilter(); droneFilter.type = 'lowpass'; droneFilter.frequency.value = 380; droneFilter.Q.value = 5;
+    droneGain = ctx.createGain(); droneGain.gain.value = 0;
+    [55, 55.35, 82.4, 110.2].forEach((f, i) => {
+      const o = ctx.createOscillator(); o.type = i < 2 ? 'sawtooth' : 'sine'; o.frequency.value = f;
+      const g = ctx.createGain(); g.gain.value = i < 2 ? 0.22 : 0.3;
+      o.connect(g).connect(droneFilter); o.start();
+    });
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.06;
+    const lfoG = ctx.createGain(); lfoG.gain.value = 220; lfo.connect(lfoG).connect(droneFilter.frequency); lfo.start();
+    droneFilter.connect(droneGain); droneGain.connect(dry); droneGain.connect(verb);
+
+    // wind: filtered noise whose level follows scroll speed
+    const wn = ctx.createBufferSource(); wn.buffer = noiseBuffer(4); wn.loop = true;
+    windFilter = ctx.createBiquadFilter(); windFilter.type = 'bandpass'; windFilter.frequency.value = 600; windFilter.Q.value = 0.8;
+    windGain = ctx.createGain(); windGain.gain.value = 0;
+    wn.connect(windFilter).connect(windGain).connect(verb); wn.start();
+
+    ready = true;
+    const t = ctx.currentTime;
+    droneGain.gain.setValueAtTime(0, t); droneGain.gain.linearRampToValueAtTime(0.16, t + 5);
+    swell();
+  }
+  function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function tone(freq, type, t, a, peak, d, toVerb = true) {
+    const o = ctx.createOscillator(); o.type = type; o.frequency.value = freq;
+    const g = ctx.createGain(); env(g, t, a, peak, d);
+    o.connect(g); g.connect(dry); if (toVerb) g.connect(verb);
+    o.start(t); o.stop(t + a + d + 0.05); return o;
+  }
+  function swell() {
+    if (!ready) return; const t = ctx.currentTime;
+    [110, 164.8, 220, 329.6, 440].forEach((f, i) => tone(f, 'sine', t + i * 0.18, 1.2, 0.05, 4.5));
+    whoosh(2.2);
+  }
+  const scales = [[261.6, 392, 523.3], [293.7, 440, 587.3], [329.6, 493.9, 659.3], [220, 329.6, 440], [392, 587.3, 784], [349.2, 523.3, 698.5], [261.6, 329.6, 392, 523.3]];
+  function chime(i) {
+    if (!ready) return; const t = ctx.currentTime; const notes = scales[i % scales.length];
+    notes.forEach((f, k) => { tone(f, 'sine', t + k * 0.11, 0.01, 0.07, 2.6); tone(f * 2, 'triangle', t + k * 0.11, 0.01, 0.015, 1.2); });
+  }
+  function whoosh(dur = 0.9) {
+    if (!ready) return; const t = ctx.currentTime;
+    const s = ctx.createBufferSource(); s.buffer = noiseBuffer(dur + 0.2);
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.4;
+    f.frequency.setValueAtTime(250, t); f.frequency.exponentialRampToValueAtTime(2600, t + dur * 0.6); f.frequency.exponentialRampToValueAtTime(500, t + dur);
+    const g = ctx.createGain(); env(g, t, dur * 0.45, 0.22, dur * 0.55);
+    s.connect(f).connect(g); g.connect(verb); g.connect(dry); s.start(t); s.stop(t + dur + 0.2);
+  }
+  function blip(k = 1) {
+    if (!ready) return; const t = ctx.currentTime; const f = 880 * Math.min(k, 4) ** 0.5;
+    const o = tone(f, 'square', t, 0.005, 0.06, 0.12, false); o.frequency.exponentialRampToValueAtTime(f * 2, t + 0.08);
+    tone(f * 1.5, 'sine', t + 0.04, 0.005, 0.05, 0.5);
+    const s = ctx.createBufferSource(); s.buffer = noiseBuffer(0.15);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3000;
+    const g = ctx.createGain(); env(g, t, 0.003, 0.12, 0.1); s.connect(hp).connect(g).connect(dry); s.start(t);
+  }
+  function thud() {
+    if (!ready) return; const t = ctx.currentTime;
+    const o = tone(110, 'sine', t, 0.005, 0.35, 0.45, false); o.frequency.exponentialRampToValueAtTime(38, t + 0.4);
+    tone(146.8, 'sawtooth', t, 0.01, 0.03, 0.3, false);
+  }
+  function buzz() {
+    if (!ready) return; const t = ctx.currentTime;
+    tone(155, 'sawtooth', t, 0.005, 0.05, 0.22, false); tone(164.8, 'sawtooth', t, 0.005, 0.05, 0.22, false);
+  }
+  function tick() { if (!ready) return; tone(1975, 'sine', ctx.currentTime, 0.002, 0.015, 0.08, false); }
+  function win() {
+    if (!ready) return; const t = ctx.currentTime;
+    [523.3, 659.3, 784, 1046.5, 1318.5].forEach((f, i) => { tone(f, 'triangle', t + i * 0.09, 0.01, 0.07, 1.4); tone(f / 2, 'sine', t + i * 0.09, 0.01, 0.05, 1.8); });
+  }
+  function sparkle() {
+    if (!ready) return; const t = ctx.currentTime;
+    for (let i = 0; i < 9; i++) tone(1046.5 * Math.pow(2, (i % 5) / 5), 'sine', t + i * 0.06, 0.005, 0.03, 1.1);
+  }
+  function setEnergy(v) {
+    if (!ready) return; const t = ctx.currentTime;
+    windGain.gain.setTargetAtTime(Math.min(0.28, v * 0.5), t, 0.15);
+    windFilter.frequency.setTargetAtTime(500 + Math.min(2200, v * 3500), t, 0.2);
+  }
+  function setStage(i) {
+    if (!ready) return; const t = ctx.currentTime;
+    droneFilter.frequency.setTargetAtTime(300 + i * 70, t, 1.5);
+  }
+  function toggle() {
+    if (!ready) { init(false); return false; }
+    muted = !muted; master.gain.setTargetAtTime(muted ? 0 : 0.9, ctx.currentTime, 0.2);
+    if (ctx.state === 'suspended') ctx.resume();
+    return muted;
+  }
+  return { init, chime, whoosh, blip, thud, buzz, tick, win, sparkle, setEnergy, setStage, toggle, get muted() { return muted || !ready; } };
+})();
+
+/* ==========================================================================
+   Helpers
+   ========================================================================== */
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => t * t * (3 - 2 * t);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = matchMedia('(max-width: 760px)').matches || /Mobi|Android|iPhone/i.test(navigator.userAgent);
+const Q = isMobile ? 0.5 : 1; // particle budget
+
+const html = document.documentElement, body = document.body;
+window.game = { active: false, played: false, pending: false, recs: [] };
+const lock = on => html.classList.toggle('locked', on);
+lock(true);
+
+/* ==========================================================================
+   Scroll mapping: each chapter section maps to a station on the camera path
+   ========================================================================== */
+let sections = [], starts = [], lens = [];
+function measure() {
+  sections = [...document.querySelectorAll('.chapter')];
+  starts = sections.map(s => s.offsetTop);
+  lens = sections.map(s => s.offsetHeight);
+  if (isMobile) sections.forEach(s => {
+    const p = s.querySelector('.panel'); if (s.id === 'intro-ch' || s.id === 'finale') return;
+    const tall = p.offsetHeight > innerHeight * 0.82;           // taller than the screen: scroll it, don't pin it
+    p.style.position = tall ? 'relative' : ''; p.style.top = tall ? 'auto' : ''; p.style.marginTop = tall ? '72px' : '';
+    s.style.setProperty('--ph', p.offsetHeight + 'px');
+  });
+  else sections.forEach(s => { const p = s.querySelector('.panel'); if (s.id !== 'intro-ch' && s.id !== 'finale') p.style.top = Math.max(64, (innerHeight - p.offsetHeight) / 2) + 'px'; });
+}
+function scrollState() {
+  const y = window.scrollY + innerHeight * 0.5;
+  let i = 0; for (let k = 0; k < sections.length; k++) if (y >= starts[k]) i = k;
+  const lp = clamp((y - starts[i]) / lens[i], 0, 1);
+  return { i, lp, idx: clamp(i + lp - 0.5, 0, sections.length - 1) };
+}
+function stationScrollY(i) { return starts[i] + lens[i] * 0.5 - innerHeight * 0.5; }
+function jumpTo(i) { if (game.active) return; window.scrollTo({ top: Math.max(0, stationScrollY(i)), behavior: reduceMotion ? 'auto' : 'smooth' }); }
+
+/* panels fade in when their chapter is on screen */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  const p = e.target.querySelector('.panel'); if (p) p.classList.toggle('show', e.isIntersecting);
+}), { threshold: 0.25 });
+document.querySelectorAll('.chapter').forEach(s => io.observe(s));
+
+/* ==========================================================================
+   Summary mode (also the fallback when WebGL isn't available)
+   ========================================================================== */
+function goPlain() {
+  body.classList.add('plain', 'entered'); lock(false);
+  document.getElementById('plainBtn').textContent = 'Immersive view';
+  document.querySelectorAll('.panel').forEach(p => p.classList.add('show'));
+  window.scrollTo(0, 0);
+}
+document.getElementById('goPlain').addEventListener('click', goPlain);
+document.getElementById('plainBtn').addEventListener('click', () => {
+  if (body.classList.contains('plain')) { location.hash = ''; location.reload(); } else goPlain();
+});
+
+/* ==========================================================================
+   3D scene
+   ========================================================================== */
+const COL = { ink: 0x0E1B2E, teal: 0x4FB3A2, amber: 0xE3A94B, red: 0xE0645A, text: 0xF2EEE4, steel: 0x2A3F5F };
+let renderer, scene, camera, composer, bloom, clock, webglOK = true;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('scene'), antialias: !isMobile, powerPreference: 'high-performance' });
+  if (!renderer.getContext()) throw new Error('no gl');
+} catch (e) { webglOK = false; }
+
+if (!webglOK || typeof THREE === 'undefined') {
+  goPlain();
+  document.getElementById('plainBtn').style.display = 'none';
+} else {
+  initScene();
+}
+
+function glowTexture(inner = 'rgba(255,255,255,1)', outer = 'rgba(255,255,255,0)') {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, inner); gr.addColorStop(0.35, 'rgba(255,255,255,.55)'); gr.addColorStop(1, outer);
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
+}
+function labelSprite(text, color = '#9FB0C8', centered = false) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 96;
+  const g = c.getContext('2d'); g.font = '500 44px "IBM Plex Sans", sans-serif'; g.fillStyle = color; g.textBaseline = 'middle';
+  if (centered) { g.textAlign = 'center'; g.fillText(text, 256, 48); } else g.fillText(text, 8, 48);
+  const tex = new THREE.CanvasTexture(c);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+  s.scale.set(5.3, 1, 1); return s;
+}
+
+function initScene() {
+  const DPR = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+  renderer.setPixelRatio(DPR);
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.toneMapping = THREE.NoToneMapping; // hex colours render exactly as the brand palette
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(COL.ink);
+  scene.fog = new THREE.FogExp2(COL.ink, 0.014);
+  camera = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, 0.1, 900);
+  clock = new THREE.Clock();
+
+  scene.add(new THREE.HemisphereLight(0x9fd8cf, 0x0E1B2E, 0.7));
+  const key = new THREE.DirectionalLight(0xffffff, 0.6); key.position.set(10, 20, 10); scene.add(key);
+
+  // post-processing bloom (skipped on phones for performance)
+  if (!isMobile && THREE.EffectComposer && THREE.UnrealBloomPass) {
+    try {
+      composer = new THREE.EffectComposer(renderer);
+      composer.addPass(new THREE.RenderPass(scene, camera));
+      bloom = new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.9, 0.5, 0.5);
+      composer.addPass(bloom);
+    } catch (e) { composer = null; }
+  }
+
+  /* ---------- stations: where the camera sits and what it looks at ---------- */
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const LOOK = [V(0, 0, 0), V(-8, -1, -45), V(8, 1, -95), V(-8, 0, -140), V(0, 0, -190), V(6, 2, -245), V(0, -2, -76)];
+  const CAM  = [V(0, 0.4, 17), V(-1, 1.8, -30), V(0.5, 2.6, -80), V(-0.5, 6, -121), V(0, 0.3, -172), V(-1, 3.5, -226), V(220, 73, -76)];
+  if (innerWidth < innerHeight) { CAM[4].z = -158; CAM[6].set(230, 90, -140); LOOK[6].set(0, -2, -150); }
+  const camCurve = new THREE.CatmullRomCurve3(CAM, false, 'centripetal');
+  // Fit the finale reveal to this screen: place the whole route in the open space beside the panel.
+  function fitFinale() {
+    if (innerWidth < innerHeight) return; // portrait uses the preset framing
+    const panel = document.querySelector('#finale .panel'); if (!panel) return;
+    const edge = panel.offsetLeft + panel.offsetWidth + 70, right = innerWidth - 80;
+    const pts = LOOK.slice(1, 6), c = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, 0.1, 900), v = new THREE.Vector3();
+    for (let d = 170; d <= 520; d += 10) {
+      let lo = -Infinity, hi = -Infinity;
+      for (let lz = -20; lz >= -220; lz -= 2) {
+        c.position.set(d, d / 3, lz); c.lookAt(0, -2, lz); c.updateMatrixWorld();
+        const xs = pts.map(p => (v.copy(p).project(c).x + 1) / 2 * innerWidth);
+        const a = Math.min(...xs), b = Math.max(...xs);
+        if (a >= edge && b <= right) { if (lo === -Infinity) lo = lz; hi = lz; }
+      }
+      if (lo !== -Infinity) { const lz = (lo + hi) / 2; CAM[6].set(d, d / 3, lz); LOOK[6].set(0, -2, lz); return; }
+    }
+  }
+  fitFinale();
+  const lookCurve = new THREE.CatmullRomCurve3(LOOK, false, 'centripetal');
+  const N = LOOK.length;
+
+  /* ---------- starfield ---------- */
+  const glow = glowTexture(); const glowTex = glow;
+  {
+    const n = Math.floor(3500 * Q), pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - .5) * 400; pos[i * 3 + 1] = (Math.random() - .5) * 240; pos[i * 3 + 2] = 40 - Math.random() * 340; }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 0.5, map: glow, color: 0x9FB0C8, transparent: true, opacity: 0.6, depthWrite: false })));
+  }
+
+  /* ---------- the pipe the story travels along ---------- */
+  const pipePts = LOOK.slice(0, 6).concat([V(10, 3, -300)]);
+  const pipeCurve = new THREE.CatmullRomCurve3(pipePts, false, 'centripetal');
+  const pipe = new THREE.Mesh(new THREE.TubeGeometry(pipeCurve, 400, 0.05, 8, false),
+    new THREE.MeshBasicMaterial({ color: COL.teal, transparent: true, opacity: 0.55 }));
+  scene.add(pipe);
+  const flowN = Math.floor(700 * Q), flowPos = new Float32Array(flowN * 3), flowU = new Float32Array(flowN), flowSpd = new Float32Array(flowN), flowOff = new Float32Array(flowN * 3);
+  for (let i = 0; i < flowN; i++) { flowU[i] = Math.random(); flowSpd[i] = 0.006 + Math.random() * 0.01; flowOff[i * 3] = (Math.random() - .5) * .6; flowOff[i * 3 + 1] = (Math.random() - .5) * .6; flowOff[i * 3 + 2] = (Math.random() - .5) * .6; }
+  const flowGeo = new THREE.BufferGeometry(); flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPos, 3));
+  const flowMat = new THREE.PointsMaterial({ size: 0.2, map: glow, color: COL.teal, transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending });
+  scene.add(new THREE.Points(flowGeo, flowMat));
+  const tmpV = new THREE.Vector3();
+
+  const pipeGlow = new THREE.Mesh(new THREE.TubeGeometry(pipeCurve, 400, 0.45, 12, false),
+    new THREE.MeshBasicMaterial({ color: COL.teal, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+  scene.add(pipeGlow);
+  const beacons = [];
+  ['Source', 'Orchestration', 'Warehouse', 'Production', 'Intelligence'].forEach((name, k) => {
+    const b = new THREE.Group(); b.position.copy(LOOK[k + 1]);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: k === 4 ? COL.amber : COL.teal, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+    halo.scale.set(30, 30, 1);
+    const lab = labelSprite(name, '#F2EEE4', true); lab.material.opacity = 0; lab.scale.set(40, 7.5, 1); lab.position.set(0, 14, 0);
+    b.add(halo, lab); scene.add(b); beacons.push({ halo, lab, k });
+  });
+
+  /* ---------- intro: the name assembles from particles ---------- */
+  const nameN = Math.floor(2600 * (isMobile ? 0.6 : 1));
+  const namePos = new Float32Array(nameN * 3), nameFrom = new Float32Array(nameN * 3), nameTo = new Float32Array(nameN * 3);
+  const nameGeo = new THREE.BufferGeometry(); nameGeo.setAttribute('position', new THREE.BufferAttribute(namePos, 3));
+  const nameMat = new THREE.PointsMaterial({ size: 0.17, map: glow, color: COL.text, transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending });
+  const nameCloud = new THREE.Points(nameGeo, nameMat); scene.add(nameCloud);
+  for (let i = 0; i < nameN; i++) {
+    const r = 30 + Math.random() * 40, a = Math.random() * Math.PI * 2, b = (Math.random() - .5) * Math.PI;
+    nameFrom[i * 3] = Math.cos(a) * Math.cos(b) * r; nameFrom[i * 3 + 1] = Math.sin(b) * r * .6; nameFrom[i * 3 + 2] = Math.sin(a) * Math.cos(b) * r - 10;
+    namePos.set([nameFrom[i * 3], nameFrom[i * 3 + 1], nameFrom[i * 3 + 2]], i * 3);
+  }
+  function sampleName() {
+    const c = document.createElement('canvas'); const W = 1400, H = 260; c.width = W; c.height = H;
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = '600 200px "IBM Plex Sans", sans-serif'; g.fillText(CONTENT.name, W / 2, H / 2);
+    const d = g.getImageData(0, 0, W, H).data, pts = [];
+    for (let y = 0; y < H; y += 3) for (let x = 0; x < W; x += 3) if (d[(y * W + x) * 4 + 3] > 140) pts.push([x, y]);
+    const visW = 2 * 17 * Math.tan(THREE.MathUtils.degToRad(29)) * (innerWidth / innerHeight);
+    const width = Math.min(19, visW * 0.86);
+    for (let i = 0; i < nameN; i++) {
+      const p = pts[Math.floor(Math.random() * pts.length)] || [W / 2, H / 2];
+      nameTo[i * 3] = (p[0] - W / 2) / W * width; nameTo[i * 3 + 1] = -(p[1] - H / 2) / W * width + 1.2; nameTo[i * 3 + 2] = (Math.random() - .5) * 0.3;
+    }
+  }
+  sampleName();
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(sampleName);
+  let nameT = 0, nameStart = -1;
+
+  /* ---------- station 1: on-prem source (server racks) ---------- */
+  const origin = new THREE.Group(); origin.position.copy(LOOK[1]); scene.add(origin);
+  const rackGeo = new THREE.BoxGeometry(1.1, 3, 1.1);
+  const rackMat = new THREE.MeshStandardMaterial({ color: COL.steel, roughness: 0.6, metalness: 0.4 });
+  const racks = new THREE.InstancedMesh(rackGeo, rackMat, 21); const m4 = new THREE.Matrix4();
+  const ledGeo = new THREE.BoxGeometry(0.16, 0.06, 0.02);
+  const leds = new THREE.InstancedMesh(ledGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }), 21 * 5);
+  let r = 0, l = 0;
+  for (let row = 0; row < 3; row++) for (let col = 0; col < 7; col++) {
+    const x = (col - 3) * 1.9, z = -row * 3.2; m4.makeTranslation(x, 0, z); racks.setMatrixAt(r++, m4);
+    for (let k = 0; k < 5; k++) { m4.makeTranslation(x - 0.3 + (k % 2) * 0.5, -1 + k * 0.45, z + 0.56); leds.setMatrixAt(l, m4); leds.setColorAt(l, new THREE.Color(COL.teal)); l++; }
+  }
+  origin.add(racks, leds);
+  const originLight = new THREE.PointLight(COL.teal, 1.2, 25); originLight.position.set(0, 3, 3); origin.add(originLight);
+  const ledC = new THREE.Color();
+
+  /* ---------- station 2: orchestration (an Airflow-style DAG) ---------- */
+  const dag = new THREE.Group(); dag.position.copy(LOOK[2]); dag.rotation.y = -0.45; scene.add(dag);
+  const cols = [1, 3, 4, 3, 1], nodes = [];
+  const nodeGeo = new THREE.SphereGeometry(0.42, 24, 16);
+  cols.forEach((n, c) => { for (let k = 0; k < n; k++) {
+    const mat = new THREE.MeshStandardMaterial({ color: 0x33475f, emissive: COL.teal, emissiveIntensity: 0, roughness: .4 });
+    const m = new THREE.Mesh(nodeGeo, mat); m.position.set((c - 2) * 3.4, (k - (n - 1) / 2) * 2.2, (Math.random() - .5) * 1.2);
+    m.userData.col = c; dag.add(m); nodes.push(m);
+  } });
+  const edges = [];
+  nodes.forEach(a => nodes.forEach(b => {
+    if (b.userData.col === a.userData.col + 1 && Math.abs(a.position.y - b.position.y) < 3.4) {
+      const g = new THREE.BufferGeometry().setFromPoints([a.position, b.position]);
+      const e = new THREE.Line(g, new THREE.LineBasicMaterial({ color: COL.teal, transparent: true, opacity: 0.08 }));
+      e.userData.col = a.userData.col; dag.add(e); edges.push(e);
+    }
+  }));
+  // spot award burst
+  const burstN = 260, burstPos = new Float32Array(burstN * 3), burstVel = [];
+  const burstGeo = new THREE.BufferGeometry(); burstGeo.setAttribute('position', new THREE.BufferAttribute(burstPos, 3));
+  const burstMat = new THREE.PointsMaterial({ size: 0.3, map: glow, color: COL.amber, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
+  const burst = new THREE.Points(burstGeo, burstMat); dag.add(burst);
+  let burstT = -1, burstDone = false;
+  function fireBurst() {
+    const o = nodes[nodes.length - 1].position;
+    for (let i = 0; i < burstN; i++) {
+      burstPos.set([o.x, o.y, o.z], i * 3);
+      const v = new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).normalize().multiplyScalar(2 + Math.random() * 5);
+      burstVel[i] = v;
+    }
+    burstT = 0; burstMat.opacity = 1; Sound.sparkle();
+  }
+
+  /* ---------- station 4: the production gate (interactive interlude) ---------- */
+  const gate = new THREE.Group(); gate.position.copy(LOOK[4]); scene.add(gate);
+  const ringHot = new THREE.Color(0xE0645A);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(5.2, 0.09, 16, 160), new THREE.MeshBasicMaterial({ color: COL.teal }));
+  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(5.7, 0.02, 8, 160), new THREE.MeshBasicMaterial({ color: COL.teal, transparent: true, opacity: .4 }));
+  const scan = new THREE.Mesh(new THREE.CircleGeometry(5.1, 64), new THREE.MeshBasicMaterial({ color: COL.teal, transparent: true, opacity: 0.035, side: THREE.DoubleSide, depthWrite: false }));
+  gate.add(ring, ring2, scan);
+  const ticks = new THREE.Group(); gate.add(ticks);
+  for (let i = 0; i < 48; i++) { const t = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.4, 0.05), new THREE.MeshBasicMaterial({ color: COL.teal, transparent: true, opacity: .5 })); const a = i / 48 * Math.PI * 2; t.position.set(Math.cos(a) * 6.2, Math.sin(a) * 6.2, 0); t.rotation.z = a + Math.PI / 2; ticks.add(t); }
+
+  /* ---------- station 4: the warehouse (layers assembling) ---------- */
+  const wh = new THREE.Group(); wh.position.copy(LOOK[3]); wh.rotation.y = 0.35; scene.add(wh);
+  const layerNames = ['Raw', 'Cleaned', 'Modeled', 'Served'];
+  const blocks = [], blockGeo = new THREE.BoxGeometry(0.8, 0.5, 0.8);
+  layerNames.forEach((name, li) => {
+    const y = -4.2 + li * 2.8;
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(13, 0.06, 8), new THREE.MeshBasicMaterial({ color: COL.teal, transparent: true, opacity: 0.06, depthWrite: false }));
+    slab.position.y = y; wh.add(slab);
+    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(slab.geometry), new THREE.LineBasicMaterial({ color: COL.teal, transparent: true, opacity: .35 }));
+    edge.position.y = y; wh.add(edge);
+    const lab = labelSprite(name); lab.position.set(-9.2, y + 0.35, 0); wh.add(lab);
+    for (let k = 0; k < 24; k++) {
+      const mat = new THREE.MeshStandardMaterial({ color: li === 3 ? COL.amber : COL.teal, emissive: li === 3 ? COL.amber : COL.teal, emissiveIntensity: 0.35, transparent: true, opacity: 0, roughness: .3 });
+      const b = new THREE.Mesh(blockGeo, mat);
+      const tgt = new THREE.Vector3(-5.2 + (k % 8) * 1.5, y + 0.3, -2.2 + Math.floor(k / 8) * 2.2);
+      const from = tgt.clone().add(new THREE.Vector3((Math.random() - .5) * 20, 14 + Math.random() * 10, (Math.random() - .5) * 20));
+      b.userData = { tgt, from, order: (li * 24 + k) / 96 };
+      b.position.copy(from); wh.add(b); blocks.push(b);
+    }
+  });
+
+  /* ---------- station 5: intelligence (a galaxy of data) ---------- */
+  const ai = new THREE.Group(); ai.position.copy(LOOK[5]); scene.add(ai);
+  {
+    const n = Math.floor(5000 * Q), pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    const cA = new THREE.Color(COL.teal), cB = new THREE.Color(COL.amber), c = new THREE.Color();
+    for (let i = 0; i < n; i++) {
+      const arm = i % 3, rr = Math.pow(Math.random(), 0.6) * 16, ang = rr * 0.45 + arm * (Math.PI * 2 / 3) + (Math.random() - .5) * 0.6;
+      pos[i * 3] = Math.cos(ang) * rr; pos[i * 3 + 1] = (Math.random() - .5) * (2.2 - rr * 0.1); pos[i * 3 + 2] = Math.sin(ang) * rr;
+      c.copy(cA).lerp(cB, clamp(1 - rr / 12, 0, 1)); col.set([c.r, c.g, c.b], i * 3);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const galaxy = new THREE.Points(g, new THREE.PointsMaterial({ size: 0.22, map: glow, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    galaxy.rotation.x = 0.5; ai.add(galaxy); ai.userData.galaxy = galaxy;
+  }
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.2, 2), new THREE.MeshBasicMaterial({ color: COL.amber, wireframe: true, transparent: true, opacity: 0.8 }));
+  ai.add(core);
+  const orbiters = [];
+  const sentiment = [COL.teal, COL.text, COL.red];
+  for (let i = 0; i < 42; i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), new THREE.MeshBasicMaterial({ color: sentiment[i % 3] }));
+    m.userData = { r: 2.2 + Math.random() * 3, s: 0.3 + Math.random() * 0.7, a: Math.random() * Math.PI * 2, tilt: (Math.random() - .5) * 1.2 };
+    ai.add(m); orbiters.push(m);
+  }
+
+  /* ---------- "you": the packet travelling the pipeline ---------- */
+  const packet = new THREE.Group();
+  const pCore = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 0), new THREE.MeshBasicMaterial({ color: COL.text }));
+  const pShell = new THREE.Mesh(new THREE.OctahedronGeometry(0.24, 0), new THREE.MeshBasicMaterial({ color: COL.teal, wireframe: true, transparent: true, opacity: 0.8 }));
+  const pGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: COL.teal, transparent: true, opacity: 0.6, depthWrite: false, blending: THREE.AdditiveBlending }));
+  pGlow.scale.set(0.9, 0.9, 1);
+  packet.add(pCore, pShell, pGlow); packet.visible = false; scene.add(packet);
+  const trailN = 60, trailPos = new Float32Array(trailN * 3);
+  const trailGeo = new THREE.BufferGeometry(); trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
+  const trail = new THREE.Points(trailGeo, new THREE.PointsMaterial({ size: 0.09, map: glow, color: COL.teal, transparent: true, opacity: 0.45, depthWrite: false, blending: THREE.AdditiveBlending }));
+  trail.visible = false; scene.add(trail);
+
+  /* ==========================================================================
+     The production-gate game
+     ========================================================================== */
+  const recGood = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+  const recBad = new THREE.OctahedronGeometry(0.75, 0);
+  const hitGeo = new THREE.SphereGeometry(isMobile ? 1.5 : 1.15, 8, 6);
+  const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+  const shardN = 400, shardPos = new Float32Array(shardN * 3), shardVel = new Float32Array(shardN * 3), shardLife = new Float32Array(shardN);
+  const shardGeo = new THREE.BufferGeometry(); shardGeo.setAttribute('position', new THREE.BufferAttribute(shardPos, 3));
+  const shards = new THREE.Points(shardGeo, new THREE.PointsMaterial({ size: 0.22, map: glow, color: COL.red, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending }));
+  scene.add(shards); let shardI = 0;
+  for (let i = 0; i < shardN; i++) shardPos[i * 3 + 1] = -999;
+  function explode(p) {
+    for (let k = 0; k < 28; k++) {
+      const i = shardI++ % shardN; shardPos.set([p.x, p.y, p.z], i * 3);
+      shardVel.set([(Math.random() - .5) * 14, (Math.random() - .5) * 14, (Math.random() - .5) * 14], i * 3); shardLife[i] = 1;
+    }
+  }
+  const G = 4; // index of the gate chapter
+  Object.assign(game, { t: 0, dur: 22, spawnT: 0, blocked: 0, leaked: 0, total: 0 });
+  const el = id => document.getElementById(id);
+  function gateArrive() {
+    game.pending = true; lock(true);
+    window.scrollTo({ top: stationScrollY(G), behavior: reduceMotion ? 'auto' : 'smooth' });
+    setTimeout(startGame, reduceMotion ? 50 : 900);
+  }
+  function startGame() {
+    game.pending = false;
+    Object.assign(game, { active: true, t: 0, spawnT: 0.4, blocked: 0, leaked: 0, total: 0, mult: 1, peak: 1 });
+    el('gSpeed').textContent = '1.0x';
+    game.recs.forEach(r => scene.remove(r)); game.recs = [];
+    el('gBlocked').textContent = 0; el('gLeaked').textContent = 0;
+    el('gTip').style.opacity = 1; setTimeout(() => el('gTip').style.opacity = 0, 2600);
+    body.classList.add('gaming'); lock(true); Sound.whoosh(1.2);
+  }
+  function spawnRecord() {
+    const bad = game.total === 0 && game.recs.length >= 1 ? true : Math.random() < 0.62;
+    const m = new THREE.Mesh(bad ? recBad : recGood, new THREE.MeshBasicMaterial({ color: bad ? COL.red : COL.teal, wireframe: bad }));
+    const inner = new THREE.Mesh(bad ? recBad : recGood, new THREE.MeshBasicMaterial({ color: bad ? COL.red : COL.teal, transparent: true, opacity: bad ? .35 : .25 }));
+    inner.scale.setScalar(bad ? .55 : .8); m.add(inner);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: bad ? COL.red : COL.teal, transparent: true, opacity: bad ? 0.75 : 0.3, depthWrite: false, blending: THREE.AdditiveBlending }));
+    halo.scale.setScalar(bad ? 3 : 1.6); m.add(halo);
+    const hit = new THREE.Mesh(hitGeo, hitMat); hit.userData.rec = m; m.add(hit);
+    const a = Math.random() * Math.PI * 2, rad = Math.random() * 3.8;
+    m.position.set(gate.position.x + Math.cos(a) * rad, gate.position.y + Math.sin(a) * rad * 0.75, gate.position.z - 38);
+    m.userData = { bad, v: 10 + Math.random() * 5 + game.t * 0.35, spin: new THREE.Vector3(Math.random(), Math.random(), Math.random()), hit };
+    scene.add(m); game.recs.push(m); if (bad) game.total++;
+  }
+  function removeRec(m) { scene.remove(m); game.recs.splice(game.recs.indexOf(m), 1); }
+  function flash() { const f = el('flash'); f.style.opacity = 1; setTimeout(() => f.style.opacity = 0, 180); }
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  window.addEventListener('pointerdown', e => {
+    if (!game.active || (e.target.closest && e.target.closest('button'))) return;
+    ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hits = ray.intersectObjects(game.recs.map(r => r.userData.hit), false);
+    if (!hits.length) return;
+    const m = hits[0].object.userData.rec;
+    if (m.userData.bad) {
+      game.blocked++; el('gBlocked').textContent = game.blocked; explode(m.position);
+      game.mult = Math.min(Math.pow(1.2, game.blocked), 9); game.peak = game.mult;
+      el('gSpeed').textContent = game.mult.toFixed(1) + 'x'; Sound.blip(game.mult);
+    }
+    else { Sound.buzz(); }
+    removeRec(m);
+  });
+  function updateGame(dt, rawDt) {
+    game.t += rawDt; game.spawnT -= dt;
+    el('gTimer').style.transform = `scaleX(${clamp(1 - game.t / game.dur, 0, 1)})`;
+    let guard = 0;
+    while (game.t < game.dur && game.spawnT <= 0 && guard++ < 4) { spawnRecord(); game.spawnT += Math.max(0.14, lerp(0.8, 0.5, game.t / game.dur) / Math.pow(game.mult, 0.7)) * (0.7 + Math.random() * 0.6); }
+    ring.material.color.setHex(COL.teal).lerp(ringHot, clamp((game.mult - 1) / 6, 0, 1));
+    for (let i = game.recs.length - 1; i >= 0; i--) {
+      const m = game.recs[i]; m.position.z += m.userData.v * game.mult * dt;
+      m.rotation.x += m.userData.spin.x * dt * 2; m.rotation.y += m.userData.spin.y * dt * 2;
+      if (m.position.z > gate.position.z + 11) {
+        if (m.userData.bad) { game.leaked++; el('gLeaked').textContent = game.leaked; Sound.thud(); flash(); }
+        else Sound.tick();
+        removeRec(m);
+      }
+    }
+    if (game.t >= game.dur && game.recs.length === 0) endGame(false);
+  }
+  function endGame(skipped) {
+    game.active = false; game.played = true; body.classList.remove('gaming');
+    ring.material.color.setHex(COL.teal); game.mult = 1;
+    game.recs.forEach(r => scene.remove(r)); game.recs = [];
+    const res = el('gateResult');
+    if (skipped) res.innerHTML = '';
+    else {
+      const lead = `<b>${game.blocked} of ${game.total}</b> broken records caught, at up to <b>${game.peak.toFixed(1)}x</b> speed.`;
+      const msg = game.leaked === 0
+        ? `Nothing broken reached production. Impressive. Now imagine doing that every hour, forever.`
+        : `${game.leaked} broken ${game.leaked === 1 ? 'record' : 'records'} slipped through. Real pipelines only get faster, which is why reliability has to be engineered into the pipeline itself, through orchestration, tested merge logic and CI/CD, rather than caught by hand.`;
+      res.innerHTML = `<div class="result">${lead} ${msg}</div>`;
+      Sound.win();
+    }
+    el('playGate').textContent = 'Play again';
+    lock(false);
+  }
+  el('gSkip').addEventListener('click', () => endGame(true));
+  el('playGate').addEventListener('click', () => { if (!game.active) { window.scrollTo({ top: stationScrollY(G) }); startGame(); } });
+  const replay = el('replay'); if (replay) replay.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
+
+  /* ==========================================================================
+     Entering the experience
+     ========================================================================== */
+  let entered = false;
+  function enter(withSound) {
+    if (entered) return; entered = true;
+    Sound.init(!withSound);
+    el('muteBtn').textContent = withSound ? 'Sound on' : 'Sound off';
+    el('muteBtn').setAttribute('aria-pressed', String(!withSound));
+    body.classList.add('entered'); nameStart = clock.getElapsedTime();
+    setTimeout(() => { lock(false); measure(); fitFinale(); }, reduceMotion ? 100 : 1800);
+    packet.visible = true; trail.visible = true;
+  }
+  el('enterSound').addEventListener('click', () => enter(true));
+  el('enterQuiet').addEventListener('click', () => enter(false));
+  el('muteBtn').addEventListener('click', () => {
+    const m = Sound.toggle(); el('muteBtn').textContent = m ? 'Sound off' : 'Sound on'; el('muteBtn').setAttribute('aria-pressed', String(m));
+  });
+  window.addEventListener('keydown', e => { if (e.key === 'm' || e.key === 'M') el('muteBtn').click(); });
+
+  /* ==========================================================================
+     Frame loop
+     ========================================================================== */
+  const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
+  window.addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1; });
+  let camT = 0, lastStage = -1, lastY = window.scrollY, energy = 0;
+  const camPos = new THREE.Vector3(), lookPos = new THREE.Vector3(), fwd = new THREE.Vector3();
+  const hudBtns = [...document.querySelectorAll('#hud button')];
+  const progress = el('progress');
+  measure();
+
+  function frame() {
+    requestAnimationFrame(frame);
+    const rawDt = Math.min(clock.getDelta(), 0.25), dt = Math.min(rawDt, 0.05), time = clock.getElapsedTime();
+
+    // scroll → where we are in the story
+    const st = scrollState();
+    const targetT = st.idx / (N - 1);
+    if (game.active || game.pending) camT = lerp(camT, G / (N - 1), 1 - Math.exp(-dt * 4));
+    else camT = lerp(camT, targetT, 1 - Math.exp(-dt * (reduceMotion ? 12 : 3.2)));
+    const maxScroll = document.documentElement.scrollHeight - innerHeight;
+    progress.style.transform = `scaleX(${maxScroll > 0 ? window.scrollY / maxScroll : 0})`;
+
+    // stage changes: chime, hud, drone colour
+    const stage = Math.round(camT * (N - 1));
+    if (stage !== lastStage && entered) {
+      if (lastStage !== -1) { Sound.chime(stage); Sound.whoosh(0.9); }
+      Sound.setStage(stage); lastStage = stage;
+      hudBtns.forEach((b, i) => { b.classList.toggle('active', i === stage); b.classList.toggle('done', i < stage); });
+    }
+    // scroll speed drives the wind
+    const vy = Math.abs(window.scrollY - lastY) / Math.max(dt, 0.001); lastY = window.scrollY;
+    energy = lerp(energy, clamp(vy / 3000, 0, 1), 0.1); Sound.setEnergy(energy);
+
+    // arriving at the gate starts the game once
+    if (entered && !game.played && !game.active && !game.pending && st.i === G && st.lp > 0.42) gateArrive();
+
+    // camera
+    camCurve.getPoint(camT, camPos); lookCurve.getPoint(camT, lookPos);
+    mouse.sx = lerp(mouse.sx, mouse.x, 0.05); mouse.sy = lerp(mouse.sy, mouse.y, 0.05);
+    const sway = reduceMotion || game.active ? 0 : 1;
+    camera.position.set(camPos.x + mouse.sx * 1.2 * sway + Math.sin(time * 0.3) * 0.3 * sway, camPos.y - mouse.sy * 0.8 * sway + Math.cos(time * 0.4) * 0.2 * sway, camPos.z);
+    camera.lookAt(lookPos);
+    const fin = smooth(clamp((camT * (N - 1)) - (N - 2), 0, 1));
+    scene.fog.density = lerp(0.014, 0.0012, fin);
+    if (bloom) bloom.strength = lerp(0.9, 1.5, fin);
+    pipe.material.opacity = game.active ? 0.2 : lerp(0.55, 1, fin);
+    pipeGlow.material.opacity = fin * 0.22;
+    beacons.forEach(b => { const on = smooth(clamp(fin * 1.6 - b.k * 0.12, 0, 1)); b.halo.material.opacity = on * (0.55 + Math.sin(time * 2 + b.k) * 0.12); b.lab.material.opacity = on; });
+    flowMat.size = lerp(0.2, 0.55, fin);
+    flowMat.opacity = game.active ? 0.25 : 0.9;
+
+    // name particles assemble after entering, then disperse as you travel
+    if (nameStart >= 0) nameT = clamp((time - nameStart) / (reduceMotion ? 0.3 : 3.2), 0, 1);
+    const e = 1 - Math.pow(1 - nameT, 4), away = smooth(clamp(camT * (N - 1) * 1.6, 0, 1));
+    for (let i = 0; i < nameN; i++) {
+      const k = i * 3, w = Math.sin(time * 1.3 + i) * 0.03;
+      namePos[k] = lerp(nameFrom[k], nameTo[k], e) + (nameFrom[k] - nameTo[k]) * away * 0.6;
+      namePos[k + 1] = lerp(nameFrom[k + 1], nameTo[k + 1], e) + w + away * (nameFrom[k + 1] * 0.3);
+      namePos[k + 2] = lerp(nameFrom[k + 2], nameTo[k + 2], e) + away * 12;
+    }
+    nameGeo.attributes.position.needsUpdate = true;
+    nameMat.opacity = 0.95 * (1 - away * 0.85);
+
+    // data flowing along the pipe
+    for (let i = 0; i < flowN; i++) {
+      flowU[i] = (flowU[i] + flowSpd[i] * dt * (1 + energy * 4)) % 1;
+      pipeCurve.getPoint(flowU[i], tmpV);
+      flowPos[i * 3] = tmpV.x + flowOff[i * 3]; flowPos[i * 3 + 1] = tmpV.y + flowOff[i * 3 + 1]; flowPos[i * 3 + 2] = tmpV.z + flowOff[i * 3 + 2];
+    }
+    flowGeo.attributes.position.needsUpdate = true;
+
+    // the packet ("you") floats ahead of the camera and follows the pointer
+    fwd.subVectors(lookPos, camPos).normalize();
+    packet.position.copy(camera.position).addScaledVector(fwd, 7);
+    packet.position.x += mouse.sx * 1.4; packet.position.y += -mouse.sy * 0.9 - 1.9;
+    pShell.rotation.x += dt * 0.9; pShell.rotation.y += dt * 1.3; pCore.rotation.y -= dt * 2;
+    pGlow.material.opacity = 0.35 + Math.sin(time * 3) * 0.1;
+    packet.visible = entered && !game.active && fin < 0.5 && camT * (N - 1) > 0.35;
+    trailPos.copyWithin(3, 0, (trailN - 1) * 3); trailPos.set([packet.position.x, packet.position.y, packet.position.z], 0);
+    trailGeo.attributes.position.needsUpdate = true; trail.visible = packet.visible;
+
+    // station 1: racks blink
+    if (Math.random() < 0.35) { const i = Math.floor(Math.random() * leds.count); ledC.setHex(Math.random() < 0.18 ? COL.amber : Math.random() < 0.5 ? COL.teal : 0x1a2a40); leds.setColorAt(i, ledC); leds.instanceColor.needsUpdate = true; }
+
+    // station 2: DAG lights up task by task as you scroll through it
+    const lp2 = st.i === 2 ? st.lp : st.i > 2 ? 1 : 0;
+    nodes.forEach(n => { const on = clamp((lp2 * 1.5 - n.userData.col * 0.2) * 3, 0, 1); n.material.emissiveIntensity = on * (1.4 + Math.sin(time * 4 + n.userData.col) * 0.2); n.scale.setScalar(1 + on * 0.12); });
+    edges.forEach(ed => { ed.material.opacity = 0.08 + clamp((lp2 * 1.5 - ed.userData.col * 0.2 - 0.1) * 3, 0, 1) * 0.8; });
+    if (!burstDone && lp2 > 0.72 && entered) { burstDone = true; fireBurst(); }
+    if (burstT >= 0) {
+      burstT += dt;
+      for (let i = 0; i < burstN; i++) { burstPos[i * 3] += burstVel[i].x * dt; burstPos[i * 3 + 1] += burstVel[i].y * dt; burstPos[i * 3 + 2] += burstVel[i].z * dt; burstVel[i].multiplyScalar(0.97); }
+      burstGeo.attributes.position.needsUpdate = true; burstMat.opacity = clamp(1 - burstT / 3, 0, 1);
+      if (burstT > 3) burstT = -1;
+    }
+
+    // station 3: gate idles, spins faster during the game
+    const spin = game.active ? 1.2 : 0.25;
+    ticks.rotation.z += dt * spin; ring2.rotation.z -= dt * spin * 0.6;
+    scan.material.opacity = game.active ? 0.0 : 0.035 + Math.sin(time * 2) * 0.015;
+    if (game.active) updateGame(dt, rawDt);
+    for (let i = 0; i < shardN; i++) if (shardLife[i] > 0) {
+      shardLife[i] -= dt * 1.4; const k = i * 3;
+      shardPos[k] += shardVel[k] * dt; shardPos[k + 1] += shardVel[k + 1] * dt; shardPos[k + 2] += shardVel[k + 2] * dt;
+      if (shardLife[i] <= 0) shardPos[k + 1] = -999;
+    }
+    shardGeo.attributes.position.needsUpdate = true;
+
+    // station 4: blocks fall into their layers
+    const lp4 = st.i === 3 ? st.lp : st.i > 3 ? 1 : 0;
+    blocks.forEach(b => {
+      const k = smooth(clamp((lp4 * 1.35 - b.userData.order * 0.8) * 3, 0, 1));
+      b.position.lerpVectors(b.userData.from, b.userData.tgt, k);
+      b.material.opacity = k; b.rotation.y = (1 - k) * 3;
+    });
+
+    // station 5: galaxy turns, sentiment orbits the model
+    ai.userData.galaxy.rotation.y += dt * 0.05;
+    core.rotation.y += dt * 0.4; core.rotation.x += dt * 0.15; core.scale.setScalar(1 + Math.sin(time * 2) * 0.05);
+    orbiters.forEach(o => { const u = o.userData; u.a += dt * u.s; o.position.set(Math.cos(u.a) * u.r, Math.sin(u.a * 1.3) * u.tilt * 1.5, Math.sin(u.a) * u.r); });
+
+    if (composer) composer.render(); else renderer.render(scene, camera);
+  }
+  frame();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight); if (composer) composer.setSize(innerWidth, innerHeight);
+    measure(); fitFinale();
+  });
+  window.addEventListener('load', measure);
+}
+</script>
+</body>
+</html>
