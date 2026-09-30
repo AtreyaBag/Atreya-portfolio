@@ -159,8 +159,11 @@ body.gaming #hud,body.gaming #topbar{opacity:0;pointer-events:none}
 /* summary / no-webgl mode */
 body.plain #scene,body.plain #hud,body.plain .bar,body.plain #intro,body.plain #progress,body.plain #game{display:none !important}
 body.plain .chapter{min-height:0;padding:28px 0}
-body.plain .panel{position:relative;top:auto;opacity:1;transform:none;margin:0 auto;max-width:720px;width:calc(100% - 32px)}
+body.plain .panel,body.plain .panel.right,body.plain .panel.wide,body.plain #intro-ch .panel{position:relative !important;top:auto !important;bottom:auto !important;left:auto !important;opacity:1;transform:none !important;margin:0 auto !important;max-width:720px;width:calc(100% - 32px)}
 body.plain .panel.wide{margin-top:0}
+.plain-only{display:none}
+body.plain .plain-only{display:inline}
+body.plain .imm-only{display:none}
 body.plain #intro-ch .panel{position:relative;left:auto;bottom:auto;transform:none;text-align:left;background:linear-gradient(160deg,rgba(21,38,63,.78),rgba(14,27,46,.62));border:1px solid var(--line)}
 body.plain #intro-ch h1{position:static;width:auto;height:auto;clip:auto;font-size:40px;margin:0 0 4px}
 body.plain #intro-ch .hint,body.plain .play-only{display:none}
@@ -349,8 +352,8 @@ function renderChapter(c) {
     }
     const e = CONTENT.links.email;
     return `<p class="stage">At a glance</p>
-      <h2>You travelled from raw source to AI in about two minutes.</h2>
-      <p class="lead">Mine took three years, and it's still flowing.</p>
+      <h2><span class="imm-only">You travelled from raw source to AI in about two minutes.</span><span class="plain-only">Skills, credentials and contact</span></h2>
+      <p class="lead"><span class="imm-only">Mine took three years, and it's still flowing.</span><span class="plain-only">Everything above, in one place.</span></p>
       <h3>Skills</h3><div class="skills">${skills}</div>
       <h3>Credentials</h3><ul class="certs">${certs}<li>BTech, Computer Science and Engineering<span>Sikkim Manipal Institute of Technology, CGPA 8.98/10</span></li></ul>
       ${side}
